@@ -7,8 +7,8 @@ import (
 // ExcludeHost returns the set of CIDR blocks covering block minus host.
 //
 // Used to punch the Cisco gateway's own address out of the split routes the
-// gateway sends. Uni Leipzig, for example, pushes 139.18.0.0/16 and lives at
-// 139.18.110.147 -- so carrying that route verbatim routes openconnect's own
+// gateway sends. One real deployment pushes 198.18.0.0/16 and has its gateway at
+// 198.18.110.147 -- so carrying that route verbatim routes openconnect's own
 // transport into the tunnel it is carrying, and the session dies the moment it
 // has to reconnect.
 //

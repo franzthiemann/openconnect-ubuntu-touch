@@ -54,7 +54,7 @@ OpenVPN client (root) creates the real tun. App never needs root.
 - [x] 3.3 Cert TOFU: scrape the pin, confirm with the user, store per profile
 - [x] 3.4 tests/test_backend.py against the rig (19 checks)
 - [x] 3.5 Auth-group picker, groups discovered with no credentials
-- [x] 3.6 VERIFIED ON DEVICE against vpn.uni-leipzig.de: groups discovered,
+- [x] 3.6 VERIFIED ON DEVICE against vpn.example.edu: groups discovered,
       tunnel up (<tunnel-address>, mtu 1390, 7 split routes), clean disconnect
 
 ## Phase 4 — device verification (partly done early, device was attached)
@@ -76,6 +76,6 @@ OpenVPN client (root) creates the real tun. App never needs root.
 - [x] 4.6 Routing bug found: pushed bypass route is bound to tun0 by NM and
       loops the transport into its own tunnel. Push removed.
 - [x] 4.7 Split routing works; internet restored
-- [x] 4.8 Gateway sits inside its own pushed split route (139.18.0.0/16 ->
-      139.18.110.147). ExcludeHost punches it out. Needs on-device confirm.
+- [x] 4.8 Gateway sits inside its own pushed split route (198.18.0.0/16 ->
+      198.18.110.147). ExcludeHost punches it out. Needs on-device confirm.
 - [ ] 4.9 Confirm uni resources reachable with the hole-punched routes

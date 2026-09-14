@@ -105,7 +105,7 @@ func BuildServerConfig(p *Params, paths Paths, serverIP net.IP, tunFD int, port 
 	// resolves correctly for that. But NetworkManager applies every route a
 	// VPN pushes to the VPN *device*, so the rule lands as
 	//
-	//	139.18.110.147 via <lan-gateway> dev tun0
+	//	198.18.110.147 via <lan-gateway> dev tun0
 	//
 	// -- the gateway routed straight into the tunnel. Observed on device:
 	// bytes_out climbing, bytes_in stuck at 0, and nothing reachable at all.

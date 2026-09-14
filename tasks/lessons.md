@@ -127,7 +127,7 @@ configured exactly as NetworkManager-openvpn configures one, and dumps the
   no tun and no privileges, so NM-shaped behaviour can be regression-tested on
   any machine.
 
-## The real gateway (vpn.uni-leipzig.de) — Phase 0.3
+## The real gateway (vpn.example.edu) — Phase 0.3
 
 Probed live. Everything needed for the app's auth design:
 
@@ -146,10 +146,10 @@ Probed live. Everything needed for the app's auth design:
   with `AnyConnect`. Never conclude anything about the device from 9.21.)
 - **An auth group MUST be selected**, and it is prompted *before* username and
   password:
-  `GROUP: [1-Standard-Uni|2-Spezial-Alles|3-Test-MFA]:`
-    - `1-Standard-Uni`  = only university services over the VPN (split tunnel)
-    - `2-Spezial-Alles` = everything over the VPN (e.g. library resources)
-    - `3-Test-MFA`      = the MFA group, for when 2FA lands
+  `GROUP: [1-Standard|2-Full-Tunnel|3-MFA]:`
+    - `1-Standard`  = only university services over the VPN (split tunnel)
+    - `2-Full-Tunnel` = everything over the VPN (e.g. library resources)
+    - `3-MFA`      = the MFA group, for when 2FA lands
   Without `--authgroup`, `--passwd-on-stdin` has already eaten the single stdin
   line at option-parse time, so the GROUP prompt hits EOF and openconnect exits
   with `User input required in non-interactive mode`. Always pass
@@ -161,7 +161,7 @@ Probed live. Everything needed for the app's auth design:
   trick as the certificate TOFU pin.
 - Server fingerprint (for pinning):
   `pin-sha256:L54CpUv9VK4L3U6aGsp4yDX47MaHpizZOjuLDhWgzis=`,
-  host 139.18.110.147, `CONNECT_URL='https://vpn.uni-leipzig.de/'`.
+  host 198.18.110.147, `CONNECT_URL='https://vpn.example.edu/'`.
 - Design consequence: the **group picker is a required first-class UI element**,
   not an advanced option, and the profile model needs an `authgroup` field.
   The group also effectively chooses split vs full tunnel on the Cisco side,
@@ -347,12 +347,12 @@ if the extracted tree is empty. Worth remembering for any future check script.
 ## The architecture works on the device, against the real gateway
 
 Run on the Fairphone 5 through `backend.py` and the installed click's own
-binaries, against vpn.uni-leipzig.de:
+binaries, against vpn.example.edu:
 
-    discover_groups -> ['1-Standard-Uni', '2-Spezial-Alles', '3-Test-MFA']
+    discover_groups -> ['1-Standard', '2-Full-Tunnel', '3-MFA']
     address=<tunnel-address>  mtu=1390  dns=['172.18.100.2', '172.18.100.3']
     routes = 192.168.50.0/23, 10.5.1.0/24, 172.16.0.0/16, 172.26.0.0/15,
-             172.18.0.0/16, 141.39.224.0/20, 139.18.0.0/16
+             172.18.0.0/16, 198.19.224.0/20, 198.18.0.0/16
     local OpenVPN server listening on 127.0.0.1:1194
 
 Notes worth keeping:
@@ -361,9 +361,9 @@ Notes worth keeping:
   so the OpenVPN client sizes its tunnel to what the Cisco side will carry. The
   OpenVPN leg runs over loopback, so its encapsulation costs CPU but nothing on
   the wire; the Cisco MTU is the only one that matters.
-- `1-Standard-Uni` is a **split** tunnel: the gateway sends seven
+- `1-Standard` is a **split** tunnel: the gateway sends seven
   `CISCO_SPLIT_INC_*` routes and ocbridge republishes each as a `push "route"`.
-  For a full tunnel the user picks `2-Spezial-Alles` *and* leaves "Only use
+  For a full tunnel the user picks `2-Full-Tunnel` *and* leaves "Only use
   connection for VPN resources" off in the VPN editor.
 - Bringing the tunnel up **changes no routing at all** until the user switches
   the connection on in Settings. That makes on-device testing safe: there is no
@@ -565,7 +565,7 @@ the rig). So push `route <gateway> 255.255.255.255 net_gateway`.
 
 What actually lands on the device:
 
-    139.18.110.147 via <lan-gateway> dev tun0
+    198.18.110.147 via <lan-gateway> dev tun0
 
 **NetworkManager applies every route a VPN pushes to the VPN device.** The
 next-hop is honoured, the device is not. So the rule routes the gateway *into*
@@ -588,14 +588,14 @@ Two consequences:
   So "Only use connection for VPN resources" is **required**, not a preference,
   and the split routes the gateway sends are what goes through the tunnel.
 
-For Uni Leipzig that means the `1-Standard-Uni` group works and
-`2-Spezial-Alles` (everything through the VPN) does not.
+On the gateway this was tested against, that means the `1-Standard` group works and
+`2-Full-Tunnel` (everything through the VPN) does not.
 
 ### Diagnosing this class of problem
 
 `ip route get <addr>` is the direct question, and answers it per-destination:
 
-    ip route get 139.18.110.147   -> via ... dev tun0   (wrong: transport in tunnel)
+    ip route get 198.18.110.147   -> via ... dev tun0   (wrong: transport in tunnel)
     ip route get 1.1.1.1          -> via ... dev tun0   (full tunnel)
 
 Paired with `bytes_in`/`bytes_out` from status.json, an inbound count stuck at
@@ -607,13 +607,13 @@ its own tunnel.
 Removing the bad bypass push fixed general internet access but broke the VPN
 itself, and the reason is worth stating plainly:
 
-    SYN-SENT  <tunnel-address>:47530 -> 139.18.110.147:443
+    SYN-SENT  <tunnel-address>:47530 -> 198.18.110.147:443
     DTLS Dead Peer Detection detected dead peer!
-    Failed to reconnect to host vpn.uni-leipzig.de: Connection timed out
+    Failed to reconnect to host vpn.example.edu: Connection timed out
 
-openconnect was reconnecting **from the tunnel's own address**. Uni Leipzig
-pushes `139.18.0.0/16` as a split route, and its gateway lives at
-`139.18.110.147` — **inside that route**. So the transport is swallowed by the
+openconnect was reconnecting **from the tunnel's own address**. The gateway
+pushes `198.18.0.0/16` as a split route and itself sits at `198.18.110.147` —
+**inside that route**. So the transport is swallowed by the
 tunnel even in split-tunnel mode, with no default route involved at all.
 
 This is likely to be common rather than peculiar: a university or company
@@ -624,7 +624,7 @@ Since a pushed route cannot be a bypass (NetworkManager binds it to the VPN
 device), the hole has to be left in the routes that *are* pushed.
 `routes.go:ExcludeHost` subtracts the gateway's /32 from any block containing
 it by repeated halving — a /16 minus a /32 becomes 16 blocks — so
-`172.18.0.0/16` is carried intact while `139.18.0.0/16` arrives as 16 pieces
+`172.18.0.0/16` is carried intact while `198.18.0.0/16` arrives as 16 pieces
 with the gateway's address left outside the tunnel.
 
 Symptom to recognise: `bytes_out` climbing while **`bytes_in` stays exactly 0**,

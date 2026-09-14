@@ -15,11 +15,11 @@ func mustCIDR(t *testing.T, s string) *net.IPNet {
 	return n
 }
 
-// The real case: Uni Leipzig pushes 139.18.0.0/16 and the gateway it is
-// reached through lives at 139.18.110.147, inside it.
+// The real case: a deployment pushes 198.18.0.0/16 and the gateway it is
+// reached through lives at 198.18.110.147, inside it.
 func TestExcludeHostCoversEverythingButTheHost(t *testing.T) {
-	block := mustCIDR(t, "139.18.0.0/16")
-	host := net.ParseIP("139.18.110.147")
+	block := mustCIDR(t, "198.18.0.0/16")
+	host := net.ParseIP("198.18.110.147")
 
 	pieces := ExcludeHost(block, host)
 	if len(pieces) != 16 {
@@ -42,15 +42,15 @@ func TestExcludeHostCoversEverythingButTheHost(t *testing.T) {
 
 	// Boundaries, the neighbours of the hole, and a random sample: everything
 	// in the block except the host itself must still be routed.
-	for _, s := range []string{"139.18.0.0", "139.18.0.1", "139.18.255.255",
-		"139.18.110.146", "139.18.110.148", "139.18.110.0", "139.18.111.0"} {
+	for _, s := range []string{"198.18.0.0", "198.18.0.1", "198.18.255.255",
+		"198.18.110.146", "198.18.110.148", "198.18.110.0", "198.18.111.0"} {
 		if ip := net.ParseIP(s); !covered(ip) {
 			t.Errorf("%s fell out of the routes", s)
 		}
 	}
 	rnd := rand.New(rand.NewSource(1))
 	for i := 0; i < 4000; i++ {
-		ip := u32toIP(ip2u32(net.ParseIP("139.18.0.0").To4()) + uint32(rnd.Intn(1<<16)))
+		ip := u32toIP(ip2u32(net.ParseIP("198.18.0.0").To4()) + uint32(rnd.Intn(1<<16)))
 		if ip.Equal(host) {
 			continue
 		}
@@ -71,15 +71,15 @@ func TestExcludeHostCoversEverythingButTheHost(t *testing.T) {
 
 func TestExcludeHostLeavesUnrelatedBlocksAlone(t *testing.T) {
 	block := mustCIDR(t, "172.18.0.0/16")
-	pieces := ExcludeHost(block, net.ParseIP("139.18.110.147"))
+	pieces := ExcludeHost(block, net.ParseIP("198.18.110.147"))
 	if len(pieces) != 1 || pieces[0].String() != block.String() {
 		t.Errorf("got %v, want the block unchanged", pieces)
 	}
 }
 
 func TestExcludeHostOfAHostRouteLeavesNothing(t *testing.T) {
-	block := mustCIDR(t, "139.18.110.147/32")
-	if pieces := ExcludeHost(block, net.ParseIP("139.18.110.147")); len(pieces) != 0 {
+	block := mustCIDR(t, "198.18.110.147/32")
+	if pieces := ExcludeHost(block, net.ParseIP("198.18.110.147")); len(pieces) != 0 {
 		t.Errorf("got %v, want nothing", pieces)
 	}
 }
@@ -87,9 +87,9 @@ func TestExcludeHostOfAHostRouteLeavesNothing(t *testing.T) {
 // End to end on the environment the real gateway sends.
 func TestSplitRoutesPunchOutTheGateway(t *testing.T) {
 	rigEnv(t, map[string]string{
-		"VPNGATEWAY":             "139.18.110.147",
+		"VPNGATEWAY":             "198.18.110.147",
 		"CISCO_SPLIT_INC":        "2",
-		"CISCO_SPLIT_INC_0_ADDR": "139.18.0.0",
+		"CISCO_SPLIT_INC_0_ADDR": "198.18.0.0",
 		"CISCO_SPLIT_INC_0_MASK": "255.255.0.0",
 		"CISCO_SPLIT_INC_1_ADDR": "172.18.0.0",
 		"CISCO_SPLIT_INC_1_MASK": "255.255.0.0",
@@ -100,7 +100,7 @@ func TestSplitRoutesPunchOutTheGateway(t *testing.T) {
 	}
 	routes := p.SplitRoutes()
 
-	gw := net.ParseIP("139.18.110.147")
+	gw := net.ParseIP("198.18.110.147")
 	var unrelated int
 	for _, r := range routes {
 		n := &net.IPNet{IP: r.Network.To4(), Mask: net.IPMask(r.Mask.To4())}
@@ -115,7 +115,7 @@ func TestSplitRoutesPunchOutTheGateway(t *testing.T) {
 	if unrelated != 1 {
 		t.Errorf("172.18.0.0/16 was not carried through intact (%d matches)", unrelated)
 	}
-	if len(routes) != 17 { // 16 pieces of 139.18/16 + 172.18/16 whole
+	if len(routes) != 17 { // 16 pieces of 198.18/16 + 172.18/16 whole
 		t.Errorf("got %d routes, want 17", len(routes))
 	}
 }

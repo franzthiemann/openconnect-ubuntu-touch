@@ -12,7 +12,7 @@ func rigEnv(t *testing.T, overrides map[string]string) {
 	t.Helper()
 	base := map[string]string{
 		"VPNFD":                   "9",
-		"VPNGATEWAY":              "139.18.110.147",
+		"VPNGATEWAY":              "198.18.110.147",
 		"reason":                  "connect",
 		"INTERNAL_IP4_ADDRESS":    "10.99.0.121",
 		"INTERNAL_IP4_NETMASK":    "255.255.255.0",

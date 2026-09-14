@@ -82,7 +82,7 @@ func TestTheGatewayIsNeverPushedAsARoute(t *testing.T) {
 		t.Error("config pushes a net_gateway route; NetworkManager will bind it " +
 			"to the VPN device and loop the transport into the tunnel")
 	}
-	if strings.Contains(cfg, "139.18.110.147") {
+	if strings.Contains(cfg, "198.18.110.147") {
 		t.Error("config pushes a route for the gateway address")
 	}
 }
