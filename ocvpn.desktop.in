@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=OpenConnect VPN
+Comment=Connect to Cisco AnyConnect (OpenConnect) VPNs
+Exec=./lib/@ARCH_TRIPLET@/bin/ocvpn-launch %u
+Icon=assets/logo.svg
+Terminal=false
+Type=Application
+X-Lomiri-Touch=true

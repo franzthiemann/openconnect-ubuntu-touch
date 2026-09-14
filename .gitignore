@@ -1,0 +1,12 @@
+# Build output: clicks, staged trees, and the native sources the prebuild hook
+# downloads and patches.
+/build/
+/.clickable/
+
+__pycache__/
+*.pyc
+*.click
+
+# Screenshots pulled with `clickable screenshots` land here and include the
+# device's personal ones. Check them before adding any deliberately.
+/screenshots/

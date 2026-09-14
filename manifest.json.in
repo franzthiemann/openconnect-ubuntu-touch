@@ -1,0 +1,15 @@
+{
+    "name": "ocvpn.franzthiemann",
+    "description": "Connect to Cisco AnyConnect (OpenConnect) VPNs",
+    "architecture": "@CLICK_ARCH@",
+    "title": "OpenConnect VPN",
+    "hooks": {
+        "ocvpn": {
+            "apparmor": "ocvpn.apparmor",
+            "desktop": "ocvpn.desktop"
+        }
+    },
+    "version": "1.0.0",
+    "maintainer": "Franz Thiemann <franz@thiemann.io>",
+    "framework": "@CLICK_FRAMEWORK@"
+}

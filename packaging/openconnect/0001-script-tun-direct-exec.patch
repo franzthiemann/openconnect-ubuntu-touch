@@ -1,0 +1,32 @@
+Exec a plain --script-tun program directly instead of always going via
+/bin/sh, so it works where the shell itself may not be executed.
+Against openconnect 9.12.
+
+--- a/tun.c	2026-09-13 17:37:40.544017620 +0200
++++ b/tun.c	2026-09-13 17:37:40.563709145 +0200
+@@ -488,6 +488,25 @@
+ 		close(fds[0]);
+ 		script_setenv_int(vpninfo, "VPNFD", fds[1]);
+ 		apply_script_env(vpninfo->script_env);
++		/*
++		 * Exec the script directly when it is a plain executable path
++		 * containing no shell syntax.
++		 *
++		 * A sandboxed application may be allowed to execute its own
++		 * bundled helper while being denied /bin/sh entirely. That is
++		 * precisely the case under AppArmor confinement on Ubuntu Touch:
++		 * a click package may exec anything inside its own tree, but
++		 * nothing in /usr/bin. Going through the shell unconditionally
++		 * makes --script-tun unusable there, and the denial surfaces only
++		 * as "execl: Permission denied", with the tunnel already up and
++		 * the child immediately defunct.
++		 *
++		 * Anything with arguments, quoting or redirection in it still
++		 * goes through the shell exactly as before.
++		 */
++		if (!strpbrk(vpninfo->vpnc_script, " \t\n\"'\\$`&|;<>()*?[]{}#~!"))
++			execl(vpninfo->vpnc_script, vpninfo->vpnc_script,
++			      (char *)NULL);
+ 		execl("/bin/sh", "/bin/sh", "-c", vpninfo->vpnc_script, NULL);
+ 		perror(_("execl"));
+ 		exit(1);

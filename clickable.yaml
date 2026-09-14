@@ -1,0 +1,28 @@
+clickable_minimum_required: 8.9.0
+
+# Ubuntu Touch 24.04 (Qt 5.15 / Python 3.12), matching the device's OTA series.
+# If the device is on the 24.04-2.x channel, change this to
+# "ubuntu-touch-24.04-2.x": it drives $ENV{CLICK_FRAMEWORK} and
+# $ENV{APPARMOR_POLICY} in the manifest and apparmor templates.
+framework: ubuntu-touch-24.04-1.x
+
+# Not pure-qml-cmake: the click ships arch-specific native binaries
+# (openconnect, a patched openvpn, and ocbridge), so it must be tagged with a
+# real architecture rather than "all". CMake compiles nothing itself -- the
+# native parts are built by the prebuild hook and CMake only installs trees.
+builder: cmake
+kill: qmlscene
+
+# Build dependencies only. Nothing here is bundled: all three native components
+# are built from source by the prebuild hook and link against libraries the
+# Ubuntu Touch rootfs already provides, so the click ships no .so files at all.
+# (libssl-dev is already in the clickable image, but list it so the build does
+# not silently depend on that.)
+dependencies_target:
+  - libssl-dev        # openconnect and openvpn
+  - libcap-ng-dev     # openvpn
+  - libxml2-dev       # openconnect
+  - liblz4-dev        # openconnect
+  - zlib1g-dev        # openconnect
+
+prebuild: "${ROOT}/tools/prebuild.sh ${ARCH} ${ARCH_TRIPLET} ${BUILD_DIR}"

@@ -1,0 +1,36 @@
+#!/bin/sh
+# Launcher for the OpenConnect VPN click.
+#
+# Shell BUILT-INS ONLY. A confined click may not exec system utilities like
+# `dirname`, and the denial is silent: the variable ends up empty and the next
+# line fails with something that reads like a packaging bug. The architecture
+# triplet is therefore substituted at build time rather than discovered.
+#
+# Note what is deliberately NOT done here: LD_LIBRARY_PATH is not exported.
+# The bundled libraries are openconnect's, and putting them in front of
+# qmlscene's own search path risks the UI picking up a bundled library in place
+# of the system one. The backend sets LD_LIBRARY_PATH only in the environment
+# of the openconnect child, which is the only process that needs it.
+TRIPLET=@ARCH_TRIPLET@
+
+case "$0" in
+    /*) APP_DIR=${0%/lib/*} ;;
+    *)  APP_DIR=$PWD ;;
+esac
+
+# Where the bundled binaries live: openconnect, the patched openvpn and
+# ocbridge, side by side. ocbridge finds openvpn relative to its own
+# executable, so they must stay in one directory.
+OCVPN_BIN_DIR="$APP_DIR/lib/$TRIPLET/bin"
+OCVPN_LIB_DIR="$APP_DIR/lib/$TRIPLET"
+OCBRIDGE_PKG=@FULL_PROJECT_NAME@
+export OCVPN_BIN_DIR OCVPN_LIB_DIR OCBRIDGE_PKG
+
+# The click tree is read-only, so PyOtherSide's attempt to cache bytecode next
+# to backend.py is denied on every launch:
+#   apparmor="DENIED" operation="mkdir" name=".../src/__pycache__/"
+# Harmless in itself, but AppArmor denials are how real problems get diagnosed
+# and a predictable one trains you to ignore the log.
+export PYTHONDONTWRITEBYTECODE=1
+
+exec qmlscene "$APP_DIR/qml/Main.qml"

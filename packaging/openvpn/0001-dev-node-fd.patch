@@ -1,0 +1,52 @@
+Add --dev-node fd:N so openvpn can adopt an inherited descriptor as its
+tun device and run wholly unprivileged. Against openvpn 2.6.19.
+
+--- a/src/openvpn/tun.c	2026-09-13 15:26:46.404344375 +0200
++++ b/src/openvpn/tun.c	2026-09-13 15:26:46.407541191 +0200
+@@ -2197,6 +2197,46 @@
+     {
+         open_tun_dco_generic(dev, dev_type, tt, ctx);
+     }
++    else if (dev_node && !strncmp(dev_node, "fd:", 3))
++    {
++        /*
++         * --dev-node fd:N -- adopt an already-open descriptor as the tun
++         * device, instead of opening /dev/net/tun and issuing TUNSETIFF.
++         *
++         * This lets openvpn run wholly unprivileged for callers that terminate
++         * the tunnel in userspace and hand us raw IP packets over an inherited
++         * socket. Nothing else in openvpn cares how tt->fd was obtained: on
++         * Linux the device is opened IFF_NO_PI, so read_tun()/write_tun() are
++         * a bare read()/write() of unprefixed IP packets either way. A
++         * SOCK_DGRAM socketpair additionally preserves packet boundaries, so
++         * one read() is one packet, exactly as for a real tun device.
++         *
++         * The caller must also pass --ifconfig-noexec and --route-noexec:
++         * there is no interface here to configure or route through.
++         */
++        char *endp = NULL;
++        long fdnum;
++
++        errno = 0;
++        fdnum = strtol(dev_node + 3, &endp, 10);
++        if (errno || endp == dev_node + 3 || *endp != '\0'
++            || fdnum < 0 || fdnum > INT_MAX)
++        {
++            msg(M_FATAL, "ERROR: malformed --dev-node '%s', expected fd:<number>",
++                dev_node);
++        }
++        if (fcntl((int) fdnum, F_GETFD) == -1)
++        {
++            msg(M_ERR, "ERROR: --dev-node %s is not an open descriptor", dev_node);
++        }
++
++        tt->fd = (int) fdnum;
++        set_nonblock(tt->fd);
++        set_cloexec(tt->fd);
++        tt->actual_name = string_alloc(dev ? dev : "tun", NULL);
++        msg(M_INFO, "TUN/TAP adopted inherited descriptor %d as %s",
++            tt->fd, tt->actual_name);
++    }
+     else
+     {
+         /*

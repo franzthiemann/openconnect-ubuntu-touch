@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The rounded square is drawn in: Ubuntu Touch does not mask app icons. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2d6ca2"/>
+      <stop offset="1" stop-color="#1b3f63"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="256" height="256" rx="58" ry="58" fill="url(#bg)"/>
+
+  <!-- A tunnel: the near mouth, and the traffic passing through it. -->
+  <ellipse cx="128" cy="128" rx="74" ry="74" fill="none" stroke="#ffffff"
+           stroke-opacity="0.28" stroke-width="12"/>
+  <ellipse cx="128" cy="128" rx="46" ry="46" fill="none" stroke="#ffffff"
+           stroke-opacity="0.45" stroke-width="10"/>
+
+  <!-- Padlock: the shackle, then the body. -->
+  <path d="M104 116 v-16 a24 24 0 0 1 48 0 v16" fill="none" stroke="#ffffff"
+        stroke-width="13" stroke-linecap="round"/>
+  <rect x="94" y="114" width="68" height="54" rx="11" ry="11" fill="#ffffff"/>
+  <circle cx="128" cy="136" r="8" fill="#1b3f63"/>
+  <rect x="124" y="140" width="8" height="16" rx="4" ry="4" fill="#1b3f63"/>
+</svg>
