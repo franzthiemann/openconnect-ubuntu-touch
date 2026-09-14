@@ -67,14 +67,20 @@ need special permissions.
 
 ## Screenshots
 
-Not in the repository yet. Take them on the device and attach them to the
-submission:
+In `docs/screenshots/`, sanitised and ready to attach, in this order:
 
-1. The profile list with a tunnel up (showing the inline setup values)
-2. The profile editor with the login groups fetched
-3. The first-run setup screen
+| File | Shows |
+|---|---|
+| `1-profile-list.png` | The profile list, not connected |
+| `2-tunnel-ready.png` | Tunnel up, with the values to enter in Settings shown inline |
+| `3-one-time-setup.png` | The setup page reached from the first-run screen |
+| `4-system-vpn-editor.png` | The matching connection in the system VPN editor |
 
-`clickable screenshots` pulls the **entire** `~/Pictures/Screenshots/` directory
-from the device, personal ones included — move them out before committing, and
-check each shot for gateway hostnames, usernames and the generated password
-before publishing.
+They were redacted with `tools/sanitize-screenshots.py`: the generated OpenVPN
+username and password, and the gateway and account of the VPN they were taken
+against, are overwritten with realistic fakes drawn in the device's own Ubuntu
+font. Solid overwrite, not blur — blurred text can often be recovered. Source
+metadata is stripped by the re-save.
+
+If you take more, note that `clickable screenshots` pulls the **entire**
+`~/Pictures/Screenshots/` directory from the device, personal ones included.

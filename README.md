@@ -3,6 +3,12 @@
 A Cisco AnyConnect (OpenConnect) VPN client for Ubuntu Touch, packaged as an
 ordinary **confined** click — no root, no `sudo`, no modification to the device.
 
+<p align="center">
+  <img src="docs/screenshots/1-profile-list.png" width="210" alt="Profile list">
+  <img src="docs/screenshots/2-tunnel-ready.png" width="210" alt="Tunnel ready">
+  <img src="docs/screenshots/3-one-time-setup.png" width="210" alt="One-time setup">
+</p>
+
 ## Why this is not just "run openconnect"
 
 `openconnect` needs a tun device and routing-table changes, which need root. A
