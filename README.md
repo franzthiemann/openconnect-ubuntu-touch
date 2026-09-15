@@ -1,3 +1,5 @@
+![OpenConnect VPN — Cisco AnyConnect VPNs, without root](assets/banner.svg)
+
 # OpenConnect VPN for Ubuntu Touch
 
 A Cisco AnyConnect (OpenConnect) VPN client for Ubuntu Touch, packaged as an

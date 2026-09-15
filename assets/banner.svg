@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- OpenConnect VPN promotional banner (OpenStore / GitHub social preview /
+     README header). Copyright (C) 2026 Franz Thiemann, GPL-3.0-or-later
+     (same as the app). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#23517E"/>
+      <stop offset="1" stop-color="#112A43"/>
+    </linearGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2D6CA2"/>
+      <stop offset="1" stop-color="#1B3F63"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- faint oversized tunnel motif, echoing the app icon -->
+  <circle cx="1150" cy="560" r="265" fill="none" stroke="#F7F3EA"
+          stroke-width="44" opacity="0.05"/>
+  <circle cx="1150" cy="560" r="160" fill="none" stroke="#62D4C8"
+          stroke-width="32" opacity="0.08"/>
+
+  <!-- app icon tile: the logo artwork at 1.25x -->
+  <g transform="translate(110,160)">
+    <rect width="320" height="320" rx="50" fill="url(#tile)"
+          stroke="#F7F3EA" stroke-opacity="0.12" stroke-width="2"/>
+    <g transform="scale(1.25)">
+      <ellipse cx="128" cy="128" rx="74" ry="74" fill="none" stroke="#F7F3EA"
+               stroke-opacity="0.28" stroke-width="12"/>
+      <ellipse cx="128" cy="128" rx="46" ry="46" fill="none" stroke="#F7F3EA"
+               stroke-opacity="0.45" stroke-width="10"/>
+      <path d="M104 116 v-16 a24 24 0 0 1 48 0 v16" fill="none" stroke="#F7F3EA"
+            stroke-width="13" stroke-linecap="round"/>
+      <rect x="94" y="114" width="68" height="54" rx="11" ry="11" fill="#F7F3EA"/>
+      <circle cx="128" cy="136" r="8" fill="#1B3F63"/>
+      <rect x="124" y="140" width="8" height="16" rx="4" ry="4" fill="#1B3F63"/>
+    </g>
+  </g>
+
+  <!-- wordmark -->
+  <text x="510" y="306" font-family="Noto Sans, Ubuntu, DejaVu Sans, sans-serif"
+        font-size="76" font-weight="700" letter-spacing="-1">
+    <tspan fill="#F7F3EA">OpenConnect</tspan><tspan fill="#62D4C8" dx="24">VPN</tspan>
+  </text>
+  <rect x="514" y="334" width="76" height="7" rx="3.5" fill="#62D4C8"/>
+
+  <!-- tagline -->
+  <text x="510" y="400" font-family="Noto Sans, Ubuntu, DejaVu Sans, sans-serif"
+        font-size="34" fill="#F7F3EA" opacity="0.82">Cisco AnyConnect VPNs, without root.</text>
+  <text x="510" y="448" font-family="Noto Sans, Ubuntu, DejaVu Sans, sans-serif"
+        font-size="24" fill="#F7F3EA" opacity="0.55">Confined app &#183; no device password &#183; no system changes</text>
+
+  <!-- platform chip -->
+  <g>
+    <rect x="510" y="488" width="196" height="44" rx="22" fill="none"
+          stroke="#F7F3EA" stroke-opacity="0.35" stroke-width="2"/>
+    <text x="608" y="517" text-anchor="middle"
+          font-family="Noto Sans, Ubuntu, DejaVu Sans, sans-serif"
+          font-size="21" fill="#F7F3EA" opacity="0.8">Ubuntu Touch</text>
+  </g>
+</svg>

@@ -24,49 +24,28 @@ match the manifest `name` exactly, or the upload is rejected.
 
 ## Description
 
-> Ubuntu Touch speaks only OpenVPN and PPTP, so the Cisco AnyConnect VPNs that
-> most universities and companies run have been out of reach. This app adds
-> them.
->
-> Enter your gateway, username and password. The app brings the tunnel up, and
-> Ubuntu Touch's own VPN support carries it from there — so the routes, DNS and
-> MTU your organisation provides are applied by the system exactly as they are
-> for any other VPN.
->
-> It runs as an ordinary confined app. It never asks for your device password,
-> never needs root, and changes nothing on your system.
->
-> **What it does**
->
-> • Several saved VPNs, each with its own gateway, account and login group
-> • Login groups fetched from the gateway before you sign in, so you choose from
->   a list instead of guessing
-> • Gateway certificates shown once for you to check, then remembered
-> • Passwords optional — saved per VPN, or typed each time
->
-> **Before you start**
->
-> Three one-time steps are needed. The app shows all three on first launch:
->
-> 1. Exempt the app from suspension in UT Tweak Tool. Without this the system
->    freezes the app the moment you switch to Settings, and the connection times
->    out.
-> 2. Create one OpenVPN connection in Settings, using the values the app
->    displays. Tap any value to copy it.
-> 3. Tick "Only use connection for VPN resources" in that connection's Advanced
->    settings.
->
-> After that, connecting is: open the app, tap your VPN, then switch it on in
-> Settings.
->
-> **Known limitation**
->
-> Split tunnels only. Traffic for the networks your VPN serves goes through it;
-> everything else goes out normally. Routing *all* traffic through the VPN is
-> not supported — the reason is explained in the README.
->
-> Source and a full account of how it works:
-> https://github.com/franzthiemann/openconnect-ubuntu-touch
+Ubuntu Touch speaks only OpenVPN and PPTP, so the Cisco AnyConnect VPNs that most universities and companies run have been out of reach. This app adds them.
+
+Enter your gateway, username and password. The app brings the tunnel up, and Ubuntu Touch's own VPN support carries it from there — so the routes, DNS and MTU your organisation provides are applied by the system exactly as they are for any other VPN. It runs as an ordinary confined app. It never asks for your device password, never needs root, and changes nothing on your system.
+**What it does**
+- Several saved VPNs, each with its own gateway, account and login group
+- Login groups fetched from the gateway before you sign in, so you choose from
+- a list instead of guessing
+- Gateway certificates shown once for you to check, then remembered
+- Passwords optional — saved per VPN, or typed each time
+**Before you start**
+Three one-time steps are needed. The app shows all three on first launch:
+1. Exempt the app from suspension in UT Tweak Tool. (VPNs need to run in the background)
+2. Create one OpenVPN connection in Settings, using the values the app displays. Tap any value to copy it.
+3. Tick "Only use connection for VPN resources" in that connection's Advanced settings.
+
+After that, connecting is: open the app, tap your VPN, then switch it on in Settings.
+
+**Known limitation**
+Split tunnels only. Traffic for the networks your VPN serves goes through it; everything else goes out normally. Routing *all* traffic through the VPN is not supported yet
+
+Source and a full account of how it works:
+https://github.com/franzthiemann/openconnect-ubuntu-touch
 
 ---
 
@@ -108,6 +87,16 @@ special permissions.
   Both patches and the build recipe are in the repository as the corresponding
   source. No shared libraries are bundled; everything linked is already in the
   rootfs.
+
+## Banner
+
+`assets/banner.svg`, and `assets/banner.png` rendered at 1280x640 for anywhere
+that will not take SVG — GitHub's social preview, forum posts, and the store
+form if it offers a slot for one. Same layout as the author's other Ubuntu
+Touch app so the two read as a pair.
+
+GitHub's social preview cannot be set through the API; upload `assets/banner.png`
+by hand under Settings -> General -> Social preview.
 
 ## Screenshots
 
