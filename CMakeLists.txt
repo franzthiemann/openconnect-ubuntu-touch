@@ -37,7 +37,10 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/manifest.json
         DESTINATION ${DATA_DIR})
 
 install(DIRECTORY qml    DESTINATION ${DATA_DIR})
-install(DIRECTORY assets DESTINATION ${DATA_DIR})
+# The banner is promotional art for the store and the README; it has no place
+# in the package the user installs.
+install(DIRECTORY assets DESTINATION ${DATA_DIR}
+        PATTERN "banner.*" EXCLUDE)
 # Go sources are built by the prebuild hook, not shipped. __pycache__ must be
 # excluded too: it is whatever the HOST's python left behind (3.14 here), which
 # is both useless and misleading on a device running 3.12.
